@@ -156,11 +156,13 @@
       letter-spacing: .12em;
     }
     .closing-mark { margin: 0; color: #8c745d; font-size: 13px; letter-spacing: .09em; }
-    .qr-placeholder {
-      width: 142px; height: 142px; margin: 28px auto 12px; border: 1px dashed rgba(155,118,68,.52);
-      background: rgba(255,255,255,.25);
+    .qr-image {
+      display: block; width: 142px; height: 142px; box-sizing: border-box; margin: 28px auto 12px;
+      padding: 5px; border: 1px solid rgba(155,118,68,.52); border-radius: 10px;
+      background: #FFFCF7; box-shadow: 0 5px 18px rgba(86,55,33,.08);
     }
     .qr-hint { max-width: 270px; margin: 0 auto; color: #927e69; font: 10px/1.8 var(--sans); letter-spacing: .04em; }
+    .qr-hint a { display: inline-block; margin-top: 4px; color: #7B1B1B; text-decoration: underline; text-underline-offset: 3px; }
     .footer-note { margin: 30px 0 0; padding-top: 17px; border-top: 1px solid rgba(201,160,99,.26); color: #978674; text-align: center; font: 10px/1.8 var(--sans); letter-spacing: .03em; }
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .75s ease, transform .75s cubic-bezier(.2,.7,.2,1); }
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
@@ -438,9 +440,8 @@
         <p class="section-kicker">HAPPILY EVER AFTER</p>
         <h2 id="closing-title" class="closing-blessing">吾师新婚快乐，<br>百年好合，永结同心！</h2>
         <p class="closing-mark">学生 【你的名字】 敬上</p><!-- TODO: 填写落款名字 -->
-        <!-- TODO: 部署后将二维码图片放入此处 -->
-        <div class="qr-placeholder" aria-label="二维码图片位，待部署后添加"></div>
-        <p class="qr-hint">长按保存二维码 · 分享给更多同学，一起为老师送上祝福</p>
+        <img class="qr-image" src="assets/qrcode.png" alt="婚礼祝福页二维码，微信扫码直接打开本页" width="1000" height="1000" loading="lazy">
+        <p class="qr-hint">长按保存二维码 · 分享给更多同学，一起为老师送上祝福<br><a href="qrcode_plain.png" download="qrcode_plain.png">保存黑白备用码</a></p>
         <p class="footer-note">愿此去经年，良辰常在，四季皆安。</p>
       </section>
     </div>
@@ -573,3 +574,4 @@
   </script>
 </body>
 </html>
+
