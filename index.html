@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF6EF">
+  <meta name="description" content="三生有幸得您为师，一朝红烛佳偶天成。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23C9A063'/%3E%3Ctext x='50' y='67' text-anchor='middle' font-size='48' fill='%237B1B1B'%3E%E5%9B%8D%3C/text%3E%3C/svg%3E">
+  <title>吾师有喜 · 李成龙 &amp; 朱彩奕</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #FAF6EF;
+      --paper-deep: #F1E9DC;
+      --ink: #352820;
+      --muted: #887968;
+      --gold: #C9A063;
+      --gold-deep: #9B7644;
+      --red: #B03A2E;
+      --wine: #7B1B1B;
+      --serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif;
+      --sans: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: #e8dfd2; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 8% 8%, rgba(201,160,99,.11), transparent 28rem),
+        radial-gradient(ellipse at 94% 48%, rgba(176,58,46,.055), transparent 32rem),
+        #e8dfd2;
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body.is-locked { overflow: hidden; }
+    button { font: inherit; }
+    .petal-canvas {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 10; pointer-events: none;
+    }
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 480px);
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 100% 3%, rgba(201,160,99,.10), transparent 17rem),
+        radial-gradient(ellipse at 0% 58%, rgba(176,58,46,.035), transparent 22rem),
+        var(--paper);
+      box-shadow: 0 18px 70px rgba(65,44,29,.12);
+    }
+    .page::before, .page::after {
+      content: ""; position: absolute; z-index: 0; pointer-events: none;
+      left: 21px; right: 21px; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,160,99,.4), transparent);
+    }
+    .page::before { top: 18px; }
+    .page::after { bottom: 18px; }
+    .content { position: relative; z-index: 1; padding: 42px 24px 54px; }
+    .ornament {
+      width: 112px; height: 30px; display: block; margin: 0 auto 14px;
+      color: var(--gold);
+    }
+    .ornament path, .ornament circle { vector-effect: non-scaling-stroke; }
+    .eyebrow, .section-kicker {
+      margin: 0; color: var(--gold-deep); font: 11px/1.6 var(--sans);
+      letter-spacing: .28em; text-align: center;
+    }
+    .hero { text-align: center; padding: 18px 0 0; }
+    .hero h1 {
+      margin: 12px 0 18px; color: #51372b; font-size: clamp(29px, 8vw, 37px);
+      font-weight: 500; letter-spacing: .16em; line-height: 1.35;
+    }
+    .couple-names {
+      display: flex; align-items: center; justify-content: center; gap: 11px;
+      margin: 0 auto 15px; color: #382a22;
+    }
+    .person { display: grid; gap: 5px; min-width: 88px; }
+    .person strong { font-size: 22px; font-weight: 500; letter-spacing: .1em; white-space: nowrap; }
+    .person small { color: var(--muted); font: 10px/1.4 var(--sans); letter-spacing: .24em; }
+    .name-join { color: var(--gold); font-size: 23px; font-weight: 400; transform: translateY(-8px); }
+    .hero-subtitle {
+      max-width: 310px; margin: 0 auto 24px; color: #756455;
+      font-size: 14px; letter-spacing: .08em; line-height: 1.9;
+    }
+    .hero-photo {
+      position: relative; margin: 0; padding: 7px; border: 1px solid rgba(201,160,99,.56);
+      background: rgba(255,255,255,.36);
+    }
+    .hero-photo::before, .hero-photo::after {
+      content: ""; position: absolute; z-index: 1; width: 24px; height: 24px;
+      border-color: var(--gold); border-style: solid; opacity: .8;
+    }
+    .hero-photo::before { top: -4px; left: -4px; border-width: 1px 0 0 1px; }
+    .hero-photo::after { right: -4px; bottom: -4px; border-width: 0 1px 1px 0; }
+    .hero-photo img {
+      display: block; width: 100%; aspect-ratio: .82; object-fit: cover; object-position: center 35%;
+      filter: saturate(.91) contrast(.97);
+    }
+    .photo-note {
+      position: absolute; right: 18px; bottom: 19px; z-index: 2; margin: 0;
+      padding: 6px 10px; color: #fffaf1; border: 1px solid rgba(255,255,255,.5);
+      background: rgba(43,31,23,.28); font: 10px/1.4 var(--sans); letter-spacing: .18em;
+      backdrop-filter: blur(5px);
+    }
+    .section { padding-top: 72px; }
+    .section-heading { text-align: center; margin: 0 0 28px; }
+    .section-heading h2 {
+      margin: 7px 0 0; font-size: 24px; line-height: 1.5; font-weight: 500;
+      color: #51372b; letter-spacing: .12em;
+    }
+    .section-heading .ornament { margin-bottom: 10px; }
+    .wishes { padding: 31px 21px 23px; border: 1px solid rgba(201,160,99,.38); background: rgba(255,255,255,.33); }
+    .wish {
+      position: relative; margin: 0; padding: 18px 0; color: #594638; text-align: center;
+      font-size: 15px; line-height: 2.05; letter-spacing: .045em;
+    }
+    .wish + .wish { border-top: 1px solid rgba(201,160,99,.24); }
+    .wish::before { content: "✦"; display: block; margin-bottom: 4px; color: var(--gold); font-size: 10px; }
+    .gallery-intro { margin: -17px 0 21px; color: var(--muted); text-align: center; font: 12px/1.8 var(--sans); letter-spacing: .05em; }
+    .gallery { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .gallery-item {
+      display: block; width: 100%; padding: 0; border: 0; overflow: hidden; cursor: zoom-in;
+      color: inherit; text-align: left; background: transparent;
+    }
+    .gallery-image-wrap { display: block; position: relative; overflow: hidden; background: #e9e0d4; }
+    .gallery-item img {
+      display: block; width: 100%; aspect-ratio: .83; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .5s;
+      filter: saturate(.92);
+    }
+    .gallery-item.wide { grid-column: span 2; }
+    .gallery-item.wide img { aspect-ratio: 1.5; object-position: center 48%; }
+    .gallery-item:hover img, .gallery-item:focus-visible img { transform: scale(1.035); filter: saturate(1); }
+    .gallery-item:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 3px; }
+    .gallery-caption { display: block; padding: 9px 2px 4px; color: #6e5947; font-size: 12px; letter-spacing: .06em; }
+    .gallery-caption em { color: var(--gold-deep); font-style: normal; }
+    .video-card { padding: 8px; border: 1px solid rgba(201,160,99,.45); background: rgba(255,255,255,.42); }
+    .video-card video { display: block; width: 100%; max-height: 540px; aspect-ratio: 16 / 9; object-fit: contain; border-radius: 2px; background: #261b17; }
+    .video-caption { padding: 13px 8px 8px; text-align: center; color: var(--muted); font: 11px/1.8 var(--sans); letter-spacing: .1em; }
+    .details { display: grid; gap: 10px; }
+    .detail-row {
+      display: grid; grid-template-columns: 86px 1fr; align-items: center; gap: 8px;
+      padding: 15px 16px; border: 1px solid rgba(201,160,99,.28); background: rgba(255,255,255,.34);
+    }
+    .detail-label { color: #8d755d; font-size: 13px; letter-spacing: .08em; }
+    .editable {
+      justify-self: start; min-width: 96px; padding: 1px 0 3px; color: #7B1B1B;
+      border-bottom: 1px dashed rgba(123,27,27,.55); font-size: 14px; letter-spacing: .08em;
+    }
+    .closing { text-align: center; }
+    .closing-blessing {
+      margin: 0 auto 14px; color: #55382b; font-size: 22px; line-height: 1.8;
+      letter-spacing: .12em;
+    }
+    .closing-mark { margin: 0; color: #8c745d; font-size: 13px; letter-spacing: .09em; }
+    .qr-placeholder {
+      width: 142px; height: 142px; margin: 28px auto 12px; border: 1px dashed rgba(155,118,68,.52);
+      background: rgba(255,255,255,.25);
+    }
+    .qr-hint { max-width: 270px; margin: 0 auto; color: #927e69; font: 10px/1.8 var(--sans); letter-spacing: .04em; }
+    .footer-note { margin: 30px 0 0; padding-top: 17px; border-top: 1px solid rgba(201,160,99,.26); color: #978674; text-align: center; font: 10px/1.8 var(--sans); letter-spacing: .03em; }
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .75s ease, transform .75s cubic-bezier(.2,.7,.2,1); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    .opening-cover {
+      position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 26px;
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(250,246,239,.99), rgba(241,233,220,.99) 70%),
+        var(--paper);
+      opacity: 1; visibility: visible;
+    }
+    .cover-shell { width: min(100%, 420px); text-align: center; }
+    .cover-topline {
+      margin: 0 0 34px; color: #94724c; font: 11px/1.7 var(--sans);
+      letter-spacing: .25em;
+    }
+    .envelope-button {
+      position: relative; display: block; width: min(82vw, 356px); aspect-ratio: 1.48;
+      margin: 0 auto; padding: 0; border: 1px solid rgba(118,21,25,.35); border-radius: 3px;
+      overflow: visible; cursor: pointer; perspective: 1000px; color: #f4dfb7;
+      background: linear-gradient(145deg, #9e2726, #b33b32 47%, #8f2025);
+      box-shadow: 0 21px 46px rgba(86,30,25,.22), inset 0 0 0 7px rgba(246,211,155,.12), inset 0 0 0 9px rgba(246,211,155,.08);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .envelope-button:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 7px; }
+    .envelope-ornament { position: absolute; inset: 12px; z-index: 1; width: calc(100% - 24px); height: calc(100% - 24px); opacity: .78; pointer-events: none; }
+    .envelope-ornament path, .envelope-ornament circle { vector-effect: non-scaling-stroke; }
+    .envelope-back { position: absolute; inset: 0; overflow: hidden; }
+    .envelope-back::before {
+      content: ""; position: absolute; inset: 0; opacity: .7;
+      background:
+        linear-gradient(32deg, transparent 49.7%, rgba(229,186,113,.68) 50%, transparent 50.35%),
+        linear-gradient(-32deg, transparent 49.7%, rgba(229,186,113,.55) 50%, transparent 50.35%);
+    }
+    .envelope-flap {
+      position: absolute; inset: 0 0 auto; z-index: 3; height: 60%;
+      background: linear-gradient(180deg,#c14b3b,#a92f2f);
+      clip-path: polygon(0 0,100% 0,50% 91%);
+      transform-origin: top center; transform-style: preserve-3d;
+      transition: transform .88s cubic-bezier(.4,0,.2,1) .42s, filter .8s .42s;
+      filter: drop-shadow(0 4px 2px rgba(70,18,18,.2));
+    }
+    .envelope-front {
+      position: absolute; inset: 0; z-index: 4;
+      background: linear-gradient(165deg, rgba(179,58,49,.9), rgba(143,31,35,.97));
+      clip-path: polygon(0 43%,50% 78%,100% 43%,100% 100%,0 100%);
+    }
+    .inner-card {
+      position: absolute; z-index: 2; left: 9%; right: 9%; bottom: 12%;
+      height: 76%; display: grid; align-content: center; gap: 9px;
+      color: #7b2924; border: 1px solid rgba(201,160,99,.8);
+      background: linear-gradient(135deg,#fffaf1,#f4e9d6);
+      box-shadow: 0 3px 12px rgba(60,25,20,.12);
+      opacity: 0; transform: translateY(48px) scale(.96);
+      transition: transform .9s cubic-bezier(.18,.74,.24,1) 1.17s, opacity .65s ease 1.2s;
+    }
+    .inner-card small { color: #9b7644; font: 9px/1.5 var(--sans); letter-spacing: .28em; }
+    .inner-card strong { font-size: 22px; font-weight: 500; letter-spacing: .22em; }
+    .inner-card span { color: #9b7644; font-size: 12px; letter-spacing: .2em; }
+    .wax-seal {
+      position: absolute; z-index: 5; left: 50%; top: 52%; width: 62px; height: 62px;
+      display: grid; place-items: center; transform: translate(-50%,-50%);
+      border: 1px solid #efcf8d; border-radius: 50%;
+      color: #8c2a26; font-size: 27px; line-height: 1;
+      background: radial-gradient(circle at 35% 30%, #f5daa0, #c99c51 75%);
+      box-shadow: 0 2px 0 #895b31, 0 5px 14px rgba(69,20,17,.28), inset 0 0 0 4px rgba(255,249,220,.32);
+      transition: opacity .34s ease, transform .42s ease, filter .34s ease;
+    }
+    .wax-seal::after {
+      content: ""; position: absolute; inset: 5px; border: 1px solid rgba(125,73,37,.5); border-radius: 50%;
+      background: linear-gradient(125deg, transparent 0 42%, rgba(121,34,32,.58) 43% 45%, transparent 46% 100%);
+      clip-path: polygon(0 0,100% 0,100% 100%,52% 100%,47% 57%,0 38%);
+    }
+    .seal-shard { position: absolute; width: 8px; height: 12px; opacity: 0; background: #d9b46e; }
+    .seal-shard.one { left: 9px; top: 5px; transform: rotate(-20deg); }
+    .seal-shard.two { right: 3px; bottom: 9px; transform: rotate(30deg); }
+    .cover-instruction {
+      margin: 29px 0 0; color: #78644f; font-size: 14px; letter-spacing: .18em;
+      animation: breathe 2.2s ease-in-out infinite;
+    }
+    .cover-signature { margin: 42px 0 0; color: rgba(132,105,75,.75); font: 9px/1.6 var(--sans); letter-spacing: .22em; }
+    .opening-cover.opening { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .55s ease 2.34s, visibility 0s linear 2.9s; }
+    .opening-cover.opening .wax-seal { animation: seal-break .42s cubic-bezier(.2,.7,.25,1) forwards; }
+    .opening-cover.opening .seal-shard.one { animation: shard-one .5s ease-out .08s forwards; }
+    .opening-cover.opening .seal-shard.two { animation: shard-two .48s ease-out .08s forwards; }
+    .opening-cover.opening .envelope-flap { transform: rotateX(-177deg); filter: brightness(.87); }
+    .opening-cover.opening .inner-card { opacity: 1; transform: translateY(-48px) scale(1); }
+    @keyframes seal-break { 35% { transform: translate(-50%,-50%) scale(1.12) rotate(-7deg); filter: brightness(1.4); } 100% { transform: translate(-50%,-50%) scale(.58) rotate(18deg); opacity: 0; } }
+    @keyframes shard-one { to { opacity: .85; transform: translate(-16px,-22px) rotate(-65deg) scale(.7); } }
+    @keyframes shard-two { to { opacity: .75; transform: translate(18px,16px) rotate(75deg) scale(.55); } }
+    @keyframes breathe { 50% { opacity: .62; } }
+
+    .lightbox {
+      width: min(calc(100vw - 28px), 760px); max-width: none; max-height: 92vh; padding: 10px;
+      border: 1px solid rgba(201,160,99,.65); color: var(--paper); background: #211b18;
+    }
+    .lightbox::backdrop { background: rgba(22,17,15,.88); backdrop-filter: blur(5px); }
+    .lightbox img { display: block; max-width: 100%; max-height: calc(92vh - 65px); margin: auto; object-fit: contain; }
+    .lightbox figcaption { padding: 10px 2px 2px; color: #e9d6b7; text-align: center; font-size: 12px; letter-spacing: .08em; }
+    .lightbox-close {
+      position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.42);
+      border-radius: 50%; color: white; background: rgba(25,18,16,.38); cursor: pointer; font: 21px/1 var(--sans);
+    }
+    @media (min-width: 600px) {
+      .content { padding-right: 38px; padding-left: 38px; }
+      .section { padding-top: 86px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body class="is-locked">
+  <canvas class="petal-canvas" id="petalCanvas" aria-hidden="true"></canvas>
+
+  <div class="opening-cover" id="openingCover">
+    <div class="cover-shell">
+      <p class="cover-topline">良辰将至 · 喜信先达</p>
+      <button class="envelope-button" id="openInvitation" type="button" aria-label="点击开启婚礼祝福">
+        <span class="envelope-back" aria-hidden="true"></span>
+        <svg class="envelope-ornament" viewBox="0 0 320 210" fill="none" aria-hidden="true">
+          <g stroke="#e6c17d" stroke-width="1.2" opacity=".92">
+            <path d="M18 67c13-24 38-26 48-9 7 13-4 28-17 24-11-3-9-17 1-19M302 67c-13-24-38-26-48-9-7 13 4 28 17 24 11-3 9-17-1-19"/>
+            <path d="M27 159c15 22 39 22 48 5 6-12-5-26-16-21-9 4-6 17 3 18M293 159c-15 22-39 22-48 5-6-12 5-26 16-21 9 4 6 17-3 18"/>
+            <path d="M44 52c9-15 23-19 34-12M276 52c-9-15-23-19-34-12M42 175c11 12 24 15 35 10M278 175c-11 12-24 15-35 10"/>
+            <path d="M27 105c18-6 24-21 17-31M293 105c-18-6-24-21-17-31"/>
+          </g>
+          <g fill="#e6c17d">
+            <circle cx="67" cy="36" r="2"/><circle cx="253" cy="36" r="2"/>
+            <circle cx="79" cy="185" r="2"/><circle cx="241" cy="185" r="2"/>
+            <path d="m48 45 3-6 3 6-3 6zM269 45l3-6 3 6-3 6zM57 169l3-6 3 6-3 6zM257 169l3-6 3 6-3 6z"/>
+          </g>
+        </svg>
+        <span class="inner-card" aria-hidden="true">
+          <small>一纸喜帖 · 一生相伴</small>
+          <strong>佳偶天成</strong>
+          <span>谨以此页 · 敬贺良缘</span>
+        </span>
+        <span class="envelope-flap" aria-hidden="true"></span>
+        <span class="envelope-front" aria-hidden="true"></span>
+        <span class="wax-seal" aria-hidden="true">囍<i class="seal-shard one"></i><i class="seal-shard two"></i></span>
+      </button>
+      <p class="cover-instruction">点击开启 · 吾师有喜</p>
+      <p class="cover-signature">一份来自学生的心意</p>
+    </div>
+  </div>
+
+  <main class="page" id="mainContent">
+    <div class="content">
+      <header class="hero reveal">
+        <svg class="ornament" viewBox="0 0 112 30" fill="none" aria-hidden="true">
+          <path d="M2 15h31c6 0 9-9 15-9 4 0 5 5 1 7-3 1-5-2-3-4M110 15H79c-6 0-9-9-15-9-4 0-5 5-1 7 3 1 5-2 3-4" stroke="currentColor" stroke-width="1.1"/>
+          <path d="M45 15h22M54 15c0-4 4-7 8-7s8 3 8 7-4 7-8 7-8-3-8-7Z" stroke="currentColor" stroke-width="1.1"/>
+          <circle cx="56" cy="15" r="2" fill="currentColor"/>
+        </svg>
+        <p class="eyebrow">一封来自学生的祝福</p>
+        <h1>吾师有喜 · 佳偶天成</h1>
+        <div class="couple-names" aria-label="新郎李成龙，新娘朱彩奕">
+          <span class="person"><strong>李成龙</strong><small>新郎</small></span>
+          <span class="name-join" aria-hidden="true">&amp;</span>
+          <span class="person"><strong>朱彩奕</strong><small>新娘</small></span>
+        </div>
+        <p class="hero-subtitle">三生有幸得您为师，一朝红烛佳偶天成</p>
+        <figure class="hero-photo">
+          <img src="assets/photo-01.jpg" alt="新郎新娘相依相望的婚礼合影" fetchpriority="high">
+          <figcaption class="photo-note">良缘为证 · 此心相许</figcaption>
+        </figure>
+      </header>
+
+      <section class="section reveal" aria-labelledby="wishes-title">
+        <div class="section-heading">
+          <svg class="ornament" viewBox="0 0 112 30" fill="none" aria-hidden="true">
+            <path d="M2 15h31c6 0 9-9 15-9 4 0 5 5 1 7-3 1-5-2-3-4M110 15H79c-6 0-9-9-15-9-4 0-5 5-1 7 3 1 5-2 3-4" stroke="currentColor" stroke-width="1.1"/>
+            <path d="M45 15h22M54 15c0-4 4-7 8-7s8 3 8 7-4 7-8 7-8-3-8-7Z" stroke="currentColor" stroke-width="1.1"/>
+            <circle cx="56" cy="15" r="2" fill="currentColor"/>
+          </svg>
+          <p class="section-kicker">WITH OUR WARMEST WISHES</p>
+          <h2 id="wishes-title">敬师 · 贺良缘</h2>
+        </div>
+        <div class="wishes">
+          <blockquote class="wish">三尺讲台，您为我们点亮前路；十里红妆，今有良人伴您余生。</blockquote>
+          <blockquote class="wish">亦师亦友亦知己，传道授业解惑忙；一朝花开并蒂日，愿与君识岁月长。</blockquote>
+          <blockquote class="wish">桃李不言，下自成蹊；花开并蒂，佳偶天成。</blockquote>
+          <blockquote class="wish">愿有岁月可回首，且以深情共白头。</blockquote>
+        </div>
+      </section>
+
+      <section class="section reveal" aria-labelledby="gallery-title">
+        <div class="section-heading">
+          <svg class="ornament" viewBox="0 0 112 30" fill="none" aria-hidden="true">
+            <path d="M2 15h31c6 0 9-9 15-9 4 0 5 5 1 7-3 1-5-2-3-4M110 15H79c-6 0-9-9-15-9-4 0-5 5-1 7 3 1 5-2 3-4" stroke="currentColor" stroke-width="1.1"/>
+            <path d="M45 15h22M54 15c0-4 4-7 8-7s8 3 8 7-4 7-8 7-8-3-8-7Z" stroke="currentColor" stroke-width="1.1"/>
+            <circle cx="56" cy="15" r="2" fill="currentColor"/>
+          </svg>
+          <p class="section-kicker">A DAY TO REMEMBER</p>
+          <h2 id="gallery-title">喜乐 · 同框</h2>
+        </div>
+        <p class="gallery-intro">把此刻的欢喜，珍藏成往后的温柔回忆</p>
+        <div class="gallery">
+          <button class="gallery-item" type="button" data-full="assets/photo-01.jpg" data-caption="相视一笑 · 心动如初" aria-label="放大查看：相视一笑，心动如初">
+            <span class="gallery-image-wrap"><img src="assets/photo-01.jpg" alt="新人相依相望" loading="lazy"></span>
+            <span class="gallery-caption"><em>01</em>　相视一笑 · 心动如初</span>
+          </button>
+          <button class="gallery-item wide" type="button" data-full="assets/photo-02.jpg" data-caption="灯火为证 · 喜乐相逢" aria-label="放大查看：灯火为证，喜乐相逢">
+            <span class="gallery-image-wrap"><img src="assets/photo-02.jpg" alt="婚礼舞台与新人" loading="lazy"></span>
+            <span class="gallery-caption"><em>02</em>　灯火为证 · 喜乐相逢</span>
+          </button>
+          <button class="gallery-item" type="button" data-full="assets/photo-03.jpg" data-caption="金色年华 · 共赴良辰" aria-label="放大查看：金色年华，共赴良辰">
+            <span class="gallery-image-wrap"><img src="assets/photo-03.jpg" alt="新娘身着金色礼服" loading="lazy"></span>
+            <span class="gallery-caption"><em>03</em>　金色年华 · 共赴良辰</span>
+          </button>
+          <button class="gallery-item" type="button" data-full="assets/photo-04.jpg" data-caption="桃李成蹊 · 良朋相伴" aria-label="放大查看：桃李成蹊，良朋相伴">
+            <span class="gallery-image-wrap"><img src="assets/photo-04.jpg" alt="新人和亲友合影" loading="lazy"></span>
+            <span class="gallery-caption"><em>04</em>　桃李成蹊 · 良朋相伴</span>
+          </button>
+          <button class="gallery-item wide" type="button" data-full="assets/photo-05.jpg" data-caption="交换戒指 · 以诺为誓" aria-label="放大查看：交换戒指，以诺为誓">
+            <span class="gallery-image-wrap"><img src="assets/photo-05.jpg" alt="新人交换戒指" loading="lazy"></span>
+            <span class="gallery-caption"><em>05</em>　交换戒指 · 以诺为誓</span>
+          </button>
+          <button class="gallery-item" type="button" data-full="assets/photo-06.jpg" data-caption="单膝献花 · 许你一生" aria-label="放大查看：单膝献花，许你一生">
+            <span class="gallery-image-wrap"><img src="assets/photo-06.jpg" alt="新郎单膝献花" loading="lazy"></span>
+            <span class="gallery-caption"><em>06</em>　单膝献花 · 许你一生</span>
+          </button>
+          <button class="gallery-item" type="button" data-full="assets/photo-07.jpg" data-caption="并肩而坐 · 静待佳期" aria-label="放大查看：并肩而坐，静待佳期">
+            <span class="gallery-image-wrap"><img src="assets/photo-07.jpg" alt="新人并肩而坐" loading="lazy"></span>
+            <span class="gallery-caption"><em>07</em>　并肩而坐 · 静待佳期</span>
+          </button>
+          <button class="gallery-item wide" type="button" data-full="assets/photo-08.jpg" data-caption="花窗映喜 · 岁月温柔" aria-label="放大查看：花窗映喜，岁月温柔">
+            <span class="gallery-image-wrap"><img src="assets/photo-08.jpg" alt="新娘在花窗前留影" loading="lazy"></span>
+            <span class="gallery-caption"><em>08</em>　花窗映喜 · 岁月温柔</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="section reveal" aria-labelledby="video-title">
+        <div class="section-heading">
+          <svg class="ornament" viewBox="0 0 112 30" fill="none" aria-hidden="true">
+            <path d="M2 15h31c6 0 9-9 15-9 4 0 5 5 1 7-3 1-5-2-3-4M110 15H79c-6 0-9-9-15-9-4 0-5 5-1 7 3 1 5-2 3-4" stroke="currentColor" stroke-width="1.1"/>
+            <path d="M45 15h22M54 15c0-4 4-7 8-7s8 3 8 7-4 7-8 7-8-3-8-7Z" stroke="currentColor" stroke-width="1.1"/>
+            <circle cx="56" cy="15" r="2" fill="currentColor"/>
+          </svg>
+          <p class="section-kicker">A LITTLE MOVING MEMORY</p>
+          <h2 id="video-title">此刻 · 如歌</h2>
+        </div>
+        <div class="video-card">
+          <video src="assets/video.mp4" poster="assets/photo-05.jpg" playsinline muted controls preload="metadata" aria-label="婚礼现场视频"></video>
+          <p class="video-caption">按下播放键，再回到这一天的欢喜</p>
+        </div>
+      </section>
+
+      <section class="section reveal" aria-labelledby="details-title">
+        <div class="section-heading">
+          <svg class="ornament" viewBox="0 0 112 30" fill="none" aria-hidden="true">
+            <path d="M2 15h31c6 0 9-9 15-9 4 0 5 5 1 7-3 1-5-2-3-4M110 15H79c-6 0-9-9-15-9-4 0-5 5-1 7 3 1 5-2 3-4" stroke="currentColor" stroke-width="1.1"/>
+            <path d="M45 15h22M54 15c0-4 4-7 8-7s8 3 8 7-4 7-8 7-8-3-8-7Z" stroke="currentColor" stroke-width="1.1"/>
+            <circle cx="56" cy="15" r="2" fill="currentColor"/>
+          </svg>
+          <p class="section-kicker">THE WEDDING DAY</p>
+          <h2 id="details-title">良辰 · 待续</h2>
+        </div>
+        <div class="details">
+          <div class="detail-row"><span class="detail-label">婚礼日期</span><span class="editable">【待补充】</span></div><!-- TODO: 填写婚礼日期 -->
+          <div class="detail-row"><span class="detail-label">婚礼地点</span><span class="editable">【待补充】</span></div><!-- TODO: 填写婚礼地点 -->
+          <div class="detail-row"><span class="detail-label">席设</span><span class="editable">【待补充】</span></div><!-- TODO: 填写席设 -->
+        </div>
+      </section>
+
+      <section class="section closing reveal" aria-labelledby="closing-title">
+        <svg class="ornament" viewBox="0 0 112 30" fill="none" aria-hidden="true">
+          <path d="M2 15h31c6 0 9-9 15-9 4 0 5 5 1 7-3 1-5-2-3-4M110 15H79c-6 0-9-9-15-9-4 0-5 5-1 7 3 1 5-2 3-4" stroke="currentColor" stroke-width="1.1"/>
+          <path d="M45 15h22M54 15c0-4 4-7 8-7s8 3 8 7-4 7-8 7-8-3-8-7Z" stroke="currentColor" stroke-width="1.1"/>
+          <circle cx="56" cy="15" r="2" fill="currentColor"/>
+        </svg>
+        <p class="section-kicker">HAPPILY EVER AFTER</p>
+        <h2 id="closing-title" class="closing-blessing">吾师新婚快乐，<br>百年好合，永结同心！</h2>
+        <p class="closing-mark">学生 【你的名字】 敬上</p><!-- TODO: 填写落款名字 -->
+        <!-- TODO: 部署后将二维码图片放入此处 -->
+        <div class="qr-placeholder" aria-label="二维码图片位，待部署后添加"></div>
+        <p class="qr-hint">长按保存二维码 · 分享给更多同学，一起为老师送上祝福</p>
+        <p class="footer-note">愿此去经年，良辰常在，四季皆安。</p>
+      </section>
+    </div>
+  </main>
+
+  <dialog class="lightbox" id="lightbox" aria-label="照片放大查看">
+    <button class="lightbox-close" id="closeLightbox" type="button" aria-label="关闭照片">×</button>
+    <figure style="margin:0">
+      <img id="lightboxImage" alt="">
+      <figcaption id="lightboxCaption"></figcaption>
+    </figure>
+  </dialog>
+
+  <script>
+    (() => {
+      const cover = document.getElementById("openingCover");
+      const openButton = document.getElementById("openInvitation");
+      let opened = false;
+      openButton.addEventListener("click", () => {
+        if (opened) return;
+        opened = true;
+        cover.classList.add("opening");
+        window.setTimeout(() => {
+          document.body.classList.remove("is-locked");
+          cover.remove();
+        }, 2910);
+      });
+
+      const revealItems = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries, currentObserver) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              currentObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+        revealItems.forEach((item) => observer.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add("is-visible"));
+      }
+
+      const dialog = document.getElementById("lightbox");
+      const largeImage = document.getElementById("lightboxImage");
+      const caption = document.getElementById("lightboxCaption");
+      document.querySelectorAll(".gallery-item").forEach((button) => {
+        button.addEventListener("click", () => {
+          largeImage.src = button.dataset.full;
+          largeImage.alt = button.querySelector("img").alt;
+          caption.textContent = button.dataset.caption;
+          if (typeof dialog.showModal === "function") dialog.showModal();
+          else dialog.setAttribute("open", "");
+        });
+      });
+      document.getElementById("closeLightbox").addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+
+      const canvas = document.getElementById("petalCanvas");
+      const ctx = canvas.getContext("2d");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let width = 0;
+      let height = 0;
+      let petals = [];
+      let hearts = [];
+      const colors = ["rgba(201,160,99,.30)", "rgba(176,58,46,.17)", "rgba(225,186,143,.34)", "rgba(255,248,234,.55)"];
+      const resize = () => {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        petals = Array.from({ length: reducedMotion ? 0 : Math.min(25, Math.floor(width / 17)) }, () => ({
+          x: Math.random() * width, y: Math.random() * height, size: 4 + Math.random() * 6,
+          speed: .18 + Math.random() * .46, sway: Math.random() * Math.PI * 2,
+          spin: (Math.random() - .5) * .018, angle: Math.random() * Math.PI * 2,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        }));
+      };
+      const drawHeart = (x, y, size, alpha) => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(size / 18, size / 18);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = "rgba(176,58,46,.62)";
+        ctx.beginPath();
+        ctx.moveTo(0, 7);
+        ctx.bezierCurveTo(-18, -4, -10, -14, 0, -5);
+        ctx.bezierCurveTo(10, -14, 18, -4, 0, 7);
+        ctx.fill();
+        ctx.restore();
+      };
+      const frame = () => {
+        ctx.clearRect(0, 0, width, height);
+        petals.forEach((petal) => {
+          petal.y += petal.speed;
+          petal.x += Math.sin(petal.sway += .008) * .22;
+          petal.angle += petal.spin;
+          if (petal.y > height + 12) { petal.y = -12; petal.x = Math.random() * width; }
+          ctx.save();
+          ctx.translate(petal.x, petal.y);
+          ctx.rotate(petal.angle);
+          ctx.fillStyle = petal.color;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, petal.size * .62, petal.size, .25, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+        hearts = hearts.filter((heart) => heart.life > 0);
+        hearts.forEach((heart) => {
+          drawHeart(heart.x, heart.y, heart.size, heart.life / 38);
+          heart.y -= .55;
+          heart.life -= 1;
+        });
+        if (!reducedMotion) window.requestAnimationFrame(frame);
+      };
+      resize();
+      if (!reducedMotion) window.requestAnimationFrame(frame);
+      window.addEventListener("resize", resize, { passive: true });
+      document.addEventListener("pointerdown", (event) => {
+        if (event.target.closest("button, a, video, dialog")) return;
+        if (!reducedMotion) hearts.push({ x: event.clientX, y: event.clientY, life: 38, size: 18 });
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>
