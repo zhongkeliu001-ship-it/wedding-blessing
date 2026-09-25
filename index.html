@@ -18,6 +18,7 @@
       --gold-deep: #9B7644;
       --red: #B03A2E;
       --wine: #7B1B1B;
+      --motion-ease: cubic-bezier(.22,1,.36,1);
       --serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif;
       --sans: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
     }
@@ -98,8 +99,10 @@
     .hero-photo::after { right: -4px; bottom: -4px; border-width: 0 1px 1px 0; }
     .hero-photo img {
       display: block; width: 100%; aspect-ratio: .82; object-fit: cover; object-position: center 35%;
-      filter: saturate(.91) contrast(.97);
+      filter: saturate(.91) contrast(.97); transform: scale(1.035);
+      transition: transform 1.45s var(--motion-ease);
     }
+    body.page-entered .hero-photo img { transform: scale(1); }
     .photo-note {
       position: absolute; right: 18px; bottom: 19px; z-index: 2; margin: 0;
       padding: 6px 10px; color: #fffaf1; border: 1px solid rgba(255,255,255,.5);
@@ -125,10 +128,21 @@
     .gallery-item {
       display: block; width: 100%; padding: 0; border: 0; overflow: hidden; cursor: zoom-in;
       color: inherit; text-align: left; background: transparent;
+      opacity: 0; transform: translateY(18px) scale(.99);
+      transition: opacity .7s var(--motion-ease), transform .9s var(--motion-ease);
     }
+    .section.is-visible .gallery-item { opacity: 1; transform: translateY(0) scale(1); }
+    .gallery-item:nth-child(1) { transition-delay: .04s; }
+    .gallery-item:nth-child(2) { transition-delay: .10s; }
+    .gallery-item:nth-child(3) { transition-delay: .16s; }
+    .gallery-item:nth-child(4) { transition-delay: .22s; }
+    .gallery-item:nth-child(5) { transition-delay: .28s; }
+    .gallery-item:nth-child(6) { transition-delay: .34s; }
+    .gallery-item:nth-child(7) { transition-delay: .40s; }
+    .gallery-item:nth-child(8) { transition-delay: .46s; }
     .gallery-image-wrap { display: block; position: relative; overflow: hidden; background: #e9e0d4; }
     .gallery-item img {
-      display: block; width: 100%; aspect-ratio: .83; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .5s;
+      display: block; width: 100%; aspect-ratio: .83; object-fit: cover; transition: transform .8s var(--motion-ease), filter .5s;
       filter: saturate(.92);
     }
     .gallery-item.wide { grid-column: span 2; }
@@ -144,11 +158,14 @@
     .detail-row {
       display: grid; grid-template-columns: 86px 1fr; align-items: center; gap: 8px;
       padding: 15px 16px; border: 1px solid rgba(201,160,99,.28); background: rgba(255,255,255,.34);
+      opacity: 0; transform: translateY(14px);
+      transition: opacity .65s var(--motion-ease), transform .8s var(--motion-ease);
     }
+    .section.is-visible .detail-row { opacity: 1; transform: translateY(0); }
+    .detail-row:nth-child(2) { transition-delay: .1s; }
     .detail-label { color: #8d755d; font-size: 13px; letter-spacing: .08em; }
-    .editable {
-      justify-self: start; min-width: 96px; padding: 1px 0 3px; color: #7B1B1B;
-      border-bottom: 1px dashed rgba(123,27,27,.55); font-size: 14px; letter-spacing: .08em;
+    .detail-value {
+      justify-self: start; color: #7B1B1B; font-size: 14px; letter-spacing: .08em;
     }
     .closing { text-align: center; }
     .closing-blessing {
@@ -164,8 +181,21 @@
     .qr-hint { max-width: 270px; margin: 0 auto; color: #927e69; font: 10px/1.8 var(--sans); letter-spacing: .04em; }
     .qr-hint a { display: inline-block; margin-top: 4px; color: #7B1B1B; text-decoration: underline; text-underline-offset: 3px; }
     .footer-note { margin: 30px 0 0; padding-top: 17px; border-top: 1px solid rgba(201,160,99,.26); color: #978674; text-align: center; font: 10px/1.8 var(--sans); letter-spacing: .03em; }
-    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .75s ease, transform .75s cubic-bezier(.2,.7,.2,1); }
-    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal { opacity: 0; transform: translateY(24px) scale(.995); transition: opacity .85s var(--motion-ease), transform 1s var(--motion-ease); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+    .hero > .ornament, .hero > .eyebrow, .hero > h1, .hero > .couple-names, .hero > .hero-subtitle, .hero > .hero-photo {
+      opacity: 0; transform: translateY(16px);
+      transition: opacity .75s var(--motion-ease), transform .95s var(--motion-ease);
+    }
+    body.page-entered .hero > .ornament, body.page-entered .hero > .eyebrow, body.page-entered .hero > h1,
+    body.page-entered .hero > .couple-names, body.page-entered .hero > .hero-subtitle, body.page-entered .hero > .hero-photo {
+      opacity: 1; transform: translateY(0);
+    }
+    body.page-entered .hero > .eyebrow { transition-delay: .07s; }
+    body.page-entered .hero > h1 { transition-delay: .14s; }
+    body.page-entered .hero > .couple-names { transition-delay: .21s; }
+    body.page-entered .hero > .hero-subtitle { transition-delay: .28s; }
+    body.page-entered .hero > .hero-photo { transition-delay: .36s; }
 
     .opening-cover {
       position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 26px;
@@ -202,7 +232,7 @@
       background: linear-gradient(180deg,#c14b3b,#a92f2f);
       clip-path: polygon(0 0,100% 0,50% 91%);
       transform-origin: top center; transform-style: preserve-3d;
-      transition: transform .88s cubic-bezier(.4,0,.2,1) .42s, filter .8s .42s;
+      transition: transform .95s var(--motion-ease) .36s, filter .8s ease .36s;
       filter: drop-shadow(0 4px 2px rgba(70,18,18,.2));
     }
     .envelope-front {
@@ -217,7 +247,7 @@
       background: linear-gradient(135deg,#fffaf1,#f4e9d6);
       box-shadow: 0 3px 12px rgba(60,25,20,.12);
       opacity: 0; transform: translateY(48px) scale(.96);
-      transition: transform .9s cubic-bezier(.18,.74,.24,1) 1.17s, opacity .65s ease 1.2s;
+      transition: transform 1s var(--motion-ease) .96s, opacity .7s ease .96s;
     }
     .inner-card small { color: #9b7644; font: 9px/1.5 var(--sans); letter-spacing: .28em; }
     .inner-card strong { font-size: 22px; font-weight: 500; letter-spacing: .22em; }
@@ -244,7 +274,7 @@
       animation: breathe 2.2s ease-in-out infinite;
     }
     .cover-signature { margin: 42px 0 0; color: rgba(132,105,75,.75); font: 9px/1.6 var(--sans); letter-spacing: .22em; }
-    .opening-cover.opening { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .55s ease 2.34s, visibility 0s linear 2.9s; }
+    .opening-cover.opening { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .65s ease 2.05s, visibility 0s linear 2.7s; }
     .opening-cover.opening .wax-seal { animation: seal-break .42s cubic-bezier(.2,.7,.25,1) forwards; }
     .opening-cover.opening .seal-shard.one { animation: shard-one .5s ease-out .08s forwards; }
     .opening-cover.opening .seal-shard.two { animation: shard-two .48s ease-out .08s forwards; }
@@ -272,7 +302,9 @@
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-      .reveal { opacity: 1; transform: none; }
+      .reveal, .gallery-item, .detail-row, .hero > .ornament, .hero > .eyebrow, .hero > h1, .hero > .couple-names, .hero > .hero-subtitle, .hero > .hero-photo {
+        opacity: 1; transform: none; transition: none;
+      }
     }
   </style>
 </head>
@@ -422,12 +454,11 @@
             <circle cx="56" cy="15" r="2" fill="currentColor"/>
           </svg>
           <p class="section-kicker">THE WEDDING DAY</p>
-          <h2 id="details-title">良辰 · 待续</h2>
+          <h2 id="details-title">良辰 · 已定</h2>
         </div>
         <div class="details">
-          <div class="detail-row"><span class="detail-label">婚礼日期</span><span class="editable">【待补充】</span></div><!-- TODO: 填写婚礼日期 -->
-          <div class="detail-row"><span class="detail-label">婚礼地点</span><span class="editable">【待补充】</span></div><!-- TODO: 填写婚礼地点 -->
-          <div class="detail-row"><span class="detail-label">席设</span><span class="editable">【待补充】</span></div><!-- TODO: 填写席设 -->
+          <div class="detail-row"><span class="detail-label">婚礼日期</span><span class="detail-value">2026年9月20日</span></div>
+          <div class="detail-row"><span class="detail-label">婚礼地点</span><span class="detail-value">邵阳玫瑰园</span></div>
         </div>
       </section>
 
@@ -459,15 +490,23 @@
     (() => {
       const cover = document.getElementById("openingCover");
       const openButton = document.getElementById("openInvitation");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       let opened = false;
       openButton.addEventListener("click", () => {
         if (opened) return;
         opened = true;
+        if (reducedMotion) {
+          document.body.classList.remove("is-locked");
+          document.body.classList.add("page-entered");
+          cover.remove();
+          return;
+        }
         cover.classList.add("opening");
         window.setTimeout(() => {
           document.body.classList.remove("is-locked");
+          document.body.classList.add("page-entered");
           cover.remove();
-        }, 2910);
+        }, 2710);
       });
 
       const revealItems = document.querySelectorAll(".reveal");
@@ -504,7 +543,6 @@
 
       const canvas = document.getElementById("petalCanvas");
       const ctx = canvas.getContext("2d");
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       let width = 0;
       let height = 0;
       let petals = [];
